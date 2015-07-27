@@ -27,13 +27,17 @@
 template <class T, class V, class Predicate>
 bool contains(const T & iteratable, V value, Predicate comparator )
 {
-	return std::any_of(iteratable.begin(), iteratable.end(), [value, &comparator](auto i) { return comparator(value, i); });
+    for(auto i : iteratable)
+	{
+		if(comparator(value, i))
+			return true;
+	}
 }
 
 template <class T, class V>
 bool contains(const T & iteratable, V value)
 {
-	return contains(iteratable, value, [](auto a, auto b) { return a == b; });
+	return iteratable.size() > 0 && (std::find(iteratable.begin(), iteratable.end(), value) != iteratable.end());
 }
 
 

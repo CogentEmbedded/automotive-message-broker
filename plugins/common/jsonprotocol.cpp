@@ -149,7 +149,7 @@ void amb::AmbRemoteClient::hasJsonMessage(const picojson::value &json)
 
 			const ListMethodCall::Ptr listMethod = listMethodReply.method();
 
-			auto itr = std::find_if(mListCalls.begin(), mListCalls.end(),[&listMethod](auto o)
+			auto itr = std::find_if(mListCalls.begin(), mListCalls.end(),[&listMethod](ListMethodCall::Ptr o)
 			{
 				return o->messageId == listMethod->messageId;
 			});
@@ -176,7 +176,7 @@ void amb::AmbRemoteClient::hasJsonMessage(const picojson::value &json)
 			reply.fromJson(json);
 			GetMethodCall::Ptr getCall = reply.method();
 
-			auto itr = std::find_if(mGetMethodCalls.begin(), mGetMethodCalls.end(),[&getCall](auto o)
+			auto itr = std::find_if(mGetMethodCalls.begin(), mGetMethodCalls.end(),[&getCall](GetMethodCall::Ptr o)
 			{
 				return o->messageId == getCall->messageId;
 			});
@@ -205,7 +205,7 @@ void amb::AmbRemoteClient::hasJsonMessage(const picojson::value &json)
 
 			auto call = reply.method();
 
-			auto itr = std::find_if(mSetMethodCalls.begin(), mSetMethodCalls.end(),[&call](auto o)
+			auto itr = std::find_if(mSetMethodCalls.begin(), mSetMethodCalls.end(),[&call](SetMethodCall::Ptr o)
 			{
 				return o->messageId == call->messageId;
 			});

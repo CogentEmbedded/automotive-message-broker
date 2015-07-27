@@ -268,7 +268,7 @@ bool testListPlusPlus()
 	complexList.push_back(complex1);
 	complexList.push_back(complex2);
 
-	TEST(contains(complexList, complex1, [](auto a, auto b) { return a.foo == b.foo && a.bar == b.bar; }));
+	TEST(contains(complexList, complex1, [](Complex a, Complex b) { return a.foo == b.foo && a.bar == b.bar; }));
 
 	return true;
 }
