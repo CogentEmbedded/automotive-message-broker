@@ -10,9 +10,9 @@ set(PLUGIN_INSTALL_PATH "${LIB_INSTALL_DIR}/automotive-message-broker")
 set (CMAKE_INSTALL_PREFIX /usr)
 
 # check that CAN interface is specified and use vcan0 by default
-if(NOT DEFINED ${DEFAULT_CAN_INTERFACE})
+if(NOT DEFINED DEFAULT_CAN_INTERFACE)
     set(DEFAULT_CAN_INTERFACE "vcan0")
-endif(NOT DEFINED ${DEFAULT_CAN_INTERFACE})
+endif(NOT DEFINED DEFAULT_CAN_INTERFACE)
 
 if(CMAKE_BUILD_TYPE MATCHES DEBUG)
     message("debug mode") 
