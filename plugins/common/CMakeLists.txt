@@ -6,6 +6,7 @@ set(plugins_common_headers_install abstractio.hpp serialport.hpp bluetooth.hpp b
 		canobserver.h logger.h mutex.h thread.h dbusexport.h dbusplugin.h abstractdbusinterface.h dbussignaller.h varianttype.h)
 
 add_library(amb-plugins-common SHARED ${plugins_common_sources})
+set_target_properties(amb-plugins-common PROPERTIES SOVERSION ${PROJECT_VERSION})
 
 pkg_check_modules(gio-unix REQUIRED gio-unix-2.0)
 
@@ -25,6 +26,7 @@ set(amb_json_protocol_sources jsonprotocol.cpp)
 set(amb_json_protocol_headers jsonprotocol.cpp)
 
 add_library(amb-json-protocol SHARED ${amb_json_protocol_sources})
+set_target_properties(amb-json-protocol PROPERTIES SOVERSION ${PROJECT_VERSION})
 
 target_link_libraries(amb-json-protocol amb -L${CMAKE_BINARY_DIR}/lib ${link_libraries} -L${CMAKE_CURRENT_BINARY_DIR} amb-plugins-common)
 

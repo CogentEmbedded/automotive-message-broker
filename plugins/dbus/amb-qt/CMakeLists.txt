@@ -22,6 +22,7 @@ set(ambqtquick_headers ambqtquick.h)
 include_directories(${CMAKE_SOURCE_DIR}/lib ${include_dirs} ${QT_INCLUDE_DIRS})
 
 add_library(amb-qt SHARED ${ambqt_sources} ${ambqt_headers_moc})
+set_target_properties(amb-qt PROPERTIES SOVERSION ${PROJECT_VERSION})
 add_library(ambqtquick MODULE ${ambqtquick_sources} ${ambqtquick_headers_moc})
 
 target_link_libraries(amb-qt amb ${QT_LIBRARIES} -L${CMAKE_CURRENT_BINARY_DIR}/lib ${link_libraries} ${gio_LIBRARIES})
