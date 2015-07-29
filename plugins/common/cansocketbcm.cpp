@@ -145,7 +145,7 @@ int CANSocketBCM::waitData(unsigned int timeout)
 
 /**
  * BCM header with one message.
- * @note hdr.nframes must always be 0 or 1.
+ * @note As a result, hdr.nframes must always be 0 or 1.
  */
 struct __attribute__ ((__packed__)) bcm_msg_one{
     struct bcm_msg_head hdr;
@@ -190,7 +190,7 @@ CANSocket::CANSocketReadSuccess CANSocketBCM::readMessage(CANFrameInfo& message)
     switch (bcms.hdr.opcode)
     {
     case RX_CHANGED:
-        if (bcms.hdr.nframes >= 1 && nbytes == sizeof(bcms))
+        if (bcms.hdr.nframes >= 1 && nbytes == sizeof(bcm_msg_head) + bcms.hdr.nframes*sizeof(can_frame))
         {
             if (bcms.hdr.nframes > 1)
             {
@@ -211,10 +211,24 @@ CANSocket::CANSocketReadSuccess CANSocketBCM::readMessage(CANFrameInfo& message)
             return CANSocket::CANSocketReadSuccess::READING_FAILED;
         }
     case RX_TIMEOUT:
-        memcpy(&message.frame, &bcms.frames[0], sizeof(bcms.frames[0]));
-        message.frame.can_id = bcms.hdr.can_id; //doubtful. Do we need to override this?
-        message.status = CANFrameInfo::CANMessageStatus::TIMEOUT;
-        return CANSocket::CANSocketReadSuccess::READING_SUCCEEDED;
+        if (bcms.hdr.nframes >= 0 && nbytes == sizeof(bcm_msg_head) + bcms.hdr.nframes*sizeof(can_frame))
+        {
+            if (bcms.hdr.nframes > 0)
+            {
+                memcpy(&message.frame, &bcms.frames[0], sizeof(bcms.frames[0]));
+            }
+            message.frame.can_id = bcms.hdr.can_id; //doubtful. Do we need to override this?
+            message.status = CANFrameInfo::CANMessageStatus::TIMEOUT;
+            return CANSocket::CANSocketReadSuccess::READING_SUCCEEDED;
+        }
+        else
+        {
+            LOG_ERROR("Unexpected data from the socket"
+                      << " " << bcms.hdr.opcode
+                      << " " << bcms.hdr.nframes
+                      << " " << nbytes);
+            return CANSocket::CANSocketReadSuccess::READING_FAILED;
+        }
 
     case TX_EXPIRED:
         // do nothing
