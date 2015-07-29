@@ -8,7 +8,8 @@ import fileinput
 import termios, fcntl, os
 import curses.ascii
 import traceback
-from gi.repository import GObject, GLib
+import gobject
+import glib
 
 from dbus.mainloop.glib import DBusGMainLoop
 
@@ -545,14 +546,14 @@ if args.command == "stdin":
 		oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
 		fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
 
-		io_stdin = GLib.IOChannel(fd)
-		io_stdin.add_watch(GLib.IO_IN, handle_keyboard, data)
+		io_stdin = glib.IOChannel(fd)
+		io_stdin.add_watch(glib.IO_IN, handle_keyboard, data)
 
 		try:
 			erase_line()
 			display_prompt()
 			sys.stdout.flush()
-			main_loop = GObject.MainLoop()
+			main_loop = gobject.MainLoop()
 			main_loop.run()
 		except KeyboardInterrupt:
 			sys.exit()
