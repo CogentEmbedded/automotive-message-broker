@@ -86,13 +86,12 @@ void CANSignal::onMessage(const can_frame& frame, std::function<void (AbstractPr
 
 void CANSignal::onTimeout(const can_frame& frame, std::function<void (AbstractPropertyType*)> changeCallback)
 {
-    //TODO: implement <no-value> handling
-/*    if (ambProperty->toString() != "none") {
-        ambProperty->setValue("none");
+    if (ambProperty->valueQuality != amb::Quality::ValueQuality::BadTimeout)
+    {
+        ambProperty->valueQuality = amb::Quality::ValueQuality::BadTimeout;
         if(changeCallback)
             changeCallback(ambProperty.get());
     }
-*/
 }
 
 
