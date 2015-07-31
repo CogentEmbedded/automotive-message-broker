@@ -14,6 +14,11 @@ static const gchar introspection_xml[] =
   "      <arg type='i' name='zone' direction='in'/>"
   "      <arg type='o' name='response' direction='out'/>"
   "    </method>"
+  "    <method name='FindObjectsForZone'>"
+  "      <arg type='s' name='searchstring' direction='in'/>"
+  "      <arg type='i' name='zone' direction='in'/>"
+  "      <arg type='ao' name='response' direction='out'/>"
+  "    </method>"
   "    <method name='FindObjectForSourceZone'>"
   "      <arg type='s' name='searchstring' direction='in'/>"
   "      <arg type='s' name='source' direction='in'/>"
@@ -166,6 +171,66 @@ static void handleMethodCall(GDBusConnection       *connection,
 		}
 
 		g_dbus_method_invocation_return_dbus_error(invocation,"org.automotive.Manager.InvalidZone", "zone not found");
+	}
+
+	else if(method == "FindObjectsForZone")
+	{
+		gchar* arg;
+		int zone;
+
+		g_variant_get(parameters,"(si)", &arg, &zone);
+
+		std::string propertyToFind = arg;
+
+		if(propertyToFind == "")
+		{
+			g_dbus_method_invocation_return_error(invocation,G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS, "Invalid argument.");
+			return;
+		}
+
+		std::list<AbstractDBusInterface*> interfaces = AbstractDBusInterface::getObjectsForProperty(propertyToFind);
+
+		if(!interfaces.size())
+		{
+			g_dbus_method_invocation_return_dbus_error(invocation, "org.automotive.Manager.ObjectNotFound", "Property not found");
+			return;
+		}
+
+		GVariantBuilder params;
+		g_variant_builder_init(&params, G_VARIANT_TYPE_ARRAY);
+
+		bool hasItems = false;
+
+		for(auto itr = interfaces.begin(); itr != interfaces.end(); itr++)
+		{
+			AbstractDBusInterface* t = *itr;
+			if(!t->isSupported())
+				continue;
+
+			if(t->zone() == (Zone::Type)zone)
+			{
+				hasItems = true;
+
+				if(!t->isRegistered())
+					t->registerObject();
+
+				std::list<std::string> processes = manager->subscribedProcesses[t];
+
+				if(!contains(processes,sender))
+				{
+					DebugOut()<<"Referencing "<<t->objectPath()<<" with sender: "<<sender<<endl;
+					manager->subscribedProcesses[t].push_back(sender);
+				}
+
+				GVariant *newvar = g_variant_new("o",t->objectPath().c_str());
+				g_variant_builder_add_value(&params, newvar);
+			}
+		}
+
+		if(hasItems)
+			g_dbus_method_invocation_return_value(invocation, g_variant_new("(ao)",&params));
+		else
+			g_dbus_method_invocation_return_dbus_error(invocation,"org.automotive.Manager.ObjectNotFound", "Property not found");
 	}
 
 	else if (method == "ZonesForObjectName")

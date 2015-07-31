@@ -16,7 +16,7 @@ endif(Qt5Core_FOUND)
 
 set(ambqt_headers ambqt.h amb-qt_global.h)
 set(ambqt_sources ambqt.cpp)
-set(ambqtquick_sources ambqtquick.cpp)
+set(ambqtquick_sources ambqtquick.cpp qmldir)
 set(ambqtquick_headers ambqtquick.h)
 
 include_directories(${CMAKE_SOURCE_DIR}/lib ${include_dirs} ${QT_INCLUDE_DIRS})

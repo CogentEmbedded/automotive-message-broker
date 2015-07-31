@@ -220,6 +220,27 @@ interface org.automotive.Manager  {
   }
 
   /*!
+   * FindObjectsForZone
+   *  \brief find the DBus object path which matches "objectName" and "zone".  This has the same behavior as FindObject
+   * except that it takes an addition zone argument and only return the path for that zone.
+   *  \arg String property is the requested property to be retrieved.
+   *  \arg Zone zone is the zone which the object
+   *  \return list of object paths that provide the given object Name.
+   *  Possible errors:
+   * "org.automotive.Manager.InvalidZone"
+   * "org.automotive.Manager.ObjectNotFound"
+  */
+  method FindObjectsForZone {
+        in {
+          String objectName
+          Zone zone
+        }
+        out {
+          array of String objectPath
+        }
+  }
+
+  /*!
    * ZonesForObjectName
    *  \brief get a list of zones for a given objectName.
    *  \arg String objectName object name.
