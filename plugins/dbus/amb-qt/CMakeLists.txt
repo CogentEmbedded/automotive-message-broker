@@ -31,10 +31,16 @@ target_link_libraries(ambqtquick amb-qt ${QT_LIBRARIES} -L${CMAKE_CURRENT_BINARY
 add_executable(ambtestclient test.cpp)
 target_link_libraries(ambtestclient amb amb-qt ${QT_LIBRARIES} -L${CMAKE_CURRENT_BINARY_DIR}/lib ${link_libraries} ${gio_LIBRARIES})
 
+qt5_add_resources(ambqtquicktest_RESOURCES qtquicktest.qrc)
+add_executable(ambqtquicktest qtquicktest.cpp ${ambqtquicktest_RESOURCES})
+target_link_libraries(ambqtquicktest amb amb-qt ${QT_LIBRARIES} -L${CMAKE_CURRENT_BINARY_DIR}/lib ${link_libraries})
+qt5_use_modules(ambqtquicktest Quick Core)
+
 install (TARGETS amb-qt LIBRARY DESTINATION lib${LIB_SUFFIX})
 
 install (FILES ${ambqt_headers} DESTINATION ${INCLUDE_INSTALL_DIR}/ COMPONENT Devel)
 install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir DESTINATION ${LIB_INSTALL_DIR}/qt5/qml/amb COMPONENT Devel)
 install (TARGETS ambqtquick DESTINATION ${LIB_INSTALL_DIR}/qt5/qml/amb)
 install (TARGETS ambtestclient RUNTIME DESTINATION bin)
+install (TARGETS ambqtquicktest RUNTIME DESTINATION bin)
 endif(qt_bindings)
