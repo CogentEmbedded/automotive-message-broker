@@ -115,6 +115,7 @@ public:
 		:DBusSink("BrakeOperation", re, connection, map<string, string>())
 	{
 		wantPropertyVariant(VehicleProperty::WheelBrake, "BrakePedalDepressed", VariantType::Read);
+		wantPropertyVariant(VehicleProperty::WheelBrakePressure, "BrakePressure", VariantType::Read);
 	}
 };
 
